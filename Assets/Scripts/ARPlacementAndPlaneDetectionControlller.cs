@@ -4,12 +4,15 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
+
 public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
 {
     ARPlacementManager m_ARPlacementManager;
     ARPlaneManager m_ARPlaneManager;
     public GameObject placeButton;
     public GameObject adjustButton;
+    
+    
 
 
     private void Awake()
@@ -24,12 +27,17 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
 
         placeButton.SetActive(true);
         adjustButton.SetActive(false);
+       
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetTouch(0).phase == TouchPhase.Began && Input.touchCount > 0)
+        {
+            m_ARPlacementManager.PlaceObject();
+            DisableARPlacementAndPlaneDetection();
+        }
     }
 
 
@@ -64,4 +72,6 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
             plane.gameObject.SetActive(value);
         }
     }
+
+    
 }

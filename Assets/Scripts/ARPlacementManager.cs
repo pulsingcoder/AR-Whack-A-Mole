@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using TMPro;
 
 public class ARPlacementManager : MonoBehaviour
 {
@@ -10,10 +11,20 @@ public class ARPlacementManager : MonoBehaviour
     static List<ARRaycastHit> raycast_Hits = new List<ARRaycastHit>();
     public Camera arCamera;
     public GameObject objectToPlace;
+    public GameObject planeDetectionVideo;
+    public GameObject tapObjectToPlaceVideo;
+    public TextMeshProUGUI infoText;
+    public Vector3 positionToPlace;
+    public GameObject infoGameObject;
+   
     // Start is called before the first frame update
     void Start()
     {
         m_ARRaycastManager = GetComponent<ARRaycastManager>();
+        planeDetectionVideo.SetActive(true);
+        tapObjectToPlaceVideo.SetActive(false);
+        infoText.text = "Move phone to detect plane";
+        positionToPlace = new Vector3();
     }
 
     // Update is called once per frame
@@ -23,9 +34,23 @@ public class ARPlacementManager : MonoBehaviour
         Ray ray = arCamera.ScreenPointToRay(centerOfScreen);
         if (m_ARRaycastManager.Raycast(ray, raycast_Hits, TrackableType.PlaneWithinPolygon))
         {
+            planeDetectionVideo.SetActive(false);
+            tapObjectToPlaceVideo.SetActive(true);
+            infoText.text = "Tap to place object";
             Pose hitPose = raycast_Hits[0].pose;
-            Vector3 positionToPlace = hitPose.position;
+            positionToPlace = hitPose.position;
+        
+        }
+    }
+
+    public void PlaceObject()
+    {
+        if (objectToPlace)
+        {
+            infoGameObject.SetActive(false);
+            tapObjectToPlaceVideo.SetActive(false);
             objectToPlace.transform.position = positionToPlace;
         }
+      
     }
 }
