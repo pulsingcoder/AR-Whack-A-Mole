@@ -11,6 +11,8 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
     ARPlaneManager m_ARPlaneManager;
     public GameObject placeButton;
     public GameObject adjustButton;
+    private float initialTouchDistance;
+    private Vector3 initialScale;
     
     
 
@@ -37,6 +39,38 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
         {
             m_ARPlacementManager.PlaceObject();
             DisableARPlacementAndPlaneDetection();
+        }
+        // Scale object
+        // We'll using the touch count
+        if (Input.touchCount == 2)
+        {
+            var touchZero = Input.GetTouch(0);
+            var touchOne = Input.GetTouch(1);
+            if (touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled || 
+                touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled)
+            {
+                return;
+            }
+            if (touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+            {
+                initialTouchDistance = Vector2.Distance(touchZero.position, touchOne.position);
+                initialScale = m_ARPlacementManager.objectToPlace.transform.localScale;
+                Debug.Log(initialScale);
+            }
+            else
+            {
+                var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
+                if (Mathf.Approximately(currentDistance, 0))
+                {
+                    return;
+                }
+                else
+                {
+                    var factor = currentDistance / initialTouchDistance;
+                    m_ARPlacementManager.objectToPlace.transform.localScale = initialScale * factor;
+                }
+            }
+
         }
     }
 
