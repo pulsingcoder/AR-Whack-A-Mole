@@ -15,12 +15,14 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
     private Vector3 initialScale;
     
     
+    
 
 
     private void Awake()
     {
         m_ARPlacementManager = GetComponent<ARPlacementManager>();
         m_ARPlaneManager = GetComponent<ARPlaneManager>();
+        GetComponent<ARShoot>().enabled = false;
     }
 
     // Start is called before the first frame update
@@ -29,7 +31,7 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
 
         placeButton.SetActive(true);
         adjustButton.SetActive(false);
-       
+           
     }
 
     // Update is called once per frame
@@ -38,7 +40,9 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
         if (Input.GetTouch(0).phase == TouchPhase.Began && Input.touchCount > 0)
         {
             m_ARPlacementManager.PlaceObject();
+
             DisableARPlacementAndPlaneDetection();
+            GetComponent<ARShoot>().enabled = true;
         }
         // Scale object
         // We'll using the touch count
