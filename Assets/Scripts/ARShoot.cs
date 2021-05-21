@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ARShoot : MonoBehaviour
 {
     public Camera arCamera;
-    public GameObject explosionPrefab;
+    public GameObject scorePopUp;
+   
     RaycastHit hit;
     
    // public GameObject hammer;
@@ -33,6 +35,8 @@ public class ARShoot : MonoBehaviour
                         if (hit.transform.GetChild(11))
                         {
                             hit.transform.GetChild(11).gameObject.SetActive(true);
+
+                            
                         }
                         
                         StartCoroutine(DeactiveMoleAfterSecond(hit.transform.gameObject));
@@ -57,8 +61,10 @@ public class ARShoot : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         mole.transform.GetChild(11).gameObject.SetActive(false);
         mole.SetActive(false);
-        explosionPrefab.GetComponent<ParticleSystem>().Play();
-
+       // hit.transform.GetChild(12).gameObject.SetActive(true);
+        Instantiate(scorePopUp, mole.transform.position, Quaternion.Euler(new Vector3(0, 180, 0)));
 
     }
+
+
 }
