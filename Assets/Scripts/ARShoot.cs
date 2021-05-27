@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Photon.Pun;
 
 
 public class ARShoot : MonoBehaviour
 {
     public Camera arCamera;
     public GameObject scorePopUp;
-   
+    public Text scoreText;
+    int score = 0;
+ 
     RaycastHit hit;
     
    // public GameObject hammer;
@@ -15,43 +19,46 @@ public class ARShoot : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        scoreText.text = "0";
     }
 
     // Update is called once per frame
     void Update()
     {
-        var touchZero = Input.GetTouch(0);
-        if (Input.touchCount > 0 && touchZero.phase == TouchPhase.Began)
+        if (GameObject.FindGameObjectWithTag("Player").gameObject.GetComponent<PhotonView>().IsMine)
         {
-            Ray ray =  arCamera.ScreenPointToRay(touchZero.position);
-            if (Physics.Raycast(ray, out hit))
+            var touchZero = Input.GetTouch(0);
+            if (Input.touchCount > 0 && touchZero.phase == TouchPhase.Began)
             {
-                if (hit.transform.tag == "Mole")
+                Ray ray = arCamera.ScreenPointToRay(touchZero.position);
+                if (Physics.Raycast(ray, out hit))
                 {
-                    if (hit.transform.position.y > -2.8)
+                    if (hit.transform.tag == "Mole")
                     {
-                       
-                        if (hit.transform.GetChild(11))
+                        if (hit.transform.position.y > -2.8)
                         {
-                            hit.transform.GetChild(11).gameObject.SetActive(true);
 
-                            
+                            if (hit.transform.GetChild(11))
+                            {
+                                hit.transform.GetChild(11).gameObject.SetActive(true);
+
+
+                            }
+
+                            StartCoroutine(DeactiveMoleAfterSecond(hit.transform.gameObject));
                         }
-                        
-                        StartCoroutine(DeactiveMoleAfterSecond(hit.transform.gameObject));
                     }
                 }
-            }
-            //if (Physics.Raycast(arCamera.transform.position, arCamera.transform.forward, out hit ))
-            //{
-            //  //  Instantiate(hammer, arCamera.transform.position + new Vector3(0, 0, 0.2f), Quaternion.identity); 
-            //    if (hit.transform.tag == "Mole")
-            //    {
-            //        Destroy(hit.transform.gameObject);
-            //    }
+                //if (Physics.Raycast(arCamera.transform.position, arCamera.transform.forward, out hit ))
+                //{
+                //  //  Instantiate(hammer, arCamera.transform.position + new Vector3(0, 0, 0.2f), Quaternion.identity); 
+                //    if (hit.transform.tag == "Mole")
+                //    {
+                //        Destroy(hit.transform.gameObject);
+                //    }
 
-            //}
+                //}
+            }
         }
     }
 
@@ -63,6 +70,13 @@ public class ARShoot : MonoBehaviour
         mole.SetActive(false);
        // hit.transform.GetChild(12).gameObject.SetActive(true);
         Instantiate(scorePopUp, mole.transform.position, Quaternion.Euler(new Vector3(0, 180, 0)));
+        score += 10;
+        if (GameObject.FindGameObjectWithTag("Player").gameObject.GetComponent<PhotonView>().IsMine)
+        {
+           
+            print("At Shoot ");
+            GameObject.FindGameObjectWithTag("ScoreManager").gameObject.GetComponent<ScoreManager>().UpdateScore(score);
+        }
 
     }
 

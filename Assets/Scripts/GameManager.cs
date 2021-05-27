@@ -12,10 +12,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("UI")]
     public GameObject ui_InformPanelGameObject;
     public TextMeshProUGUI ui_InformText;
+    public GameObject ui_JoinRandomRoomButton;
     // Start is called before the first frame update
     void Start()
     {
         ui_InformPanelGameObject.SetActive(true);
+        ui_JoinRandomRoomButton.SetActive(true);
         ui_InformText.text = "Search for Games";
     }
 
@@ -50,12 +52,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
+            ui_JoinRandomRoomButton.SetActive(false);
             ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name + " Waiting for other player...";
         }
         else
         {
             ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name;
             StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
+           
         }
         Debug.Log(PhotonNetwork.NickName + " Joined to room " + PhotonNetwork.CurrentRoom.Name);
     }

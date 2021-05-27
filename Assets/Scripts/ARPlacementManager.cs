@@ -16,6 +16,7 @@ public class ARPlacementManager : MonoBehaviour
     public TextMeshProUGUI infoText;
     public Vector3 positionToPlace;
     public GameObject infoGameObject;
+    public GameObject gameManager;
    
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class ARPlacementManager : MonoBehaviour
         m_ARRaycastManager = GetComponent<ARRaycastManager>();
         planeDetectionVideo.SetActive(true);
         tapObjectToPlaceVideo.SetActive(false);
+        gameManager.SetActive(false);
         infoText.text = "Move phone to detect plane";
         positionToPlace = new Vector3();
     }
@@ -48,6 +50,7 @@ public class ARPlacementManager : MonoBehaviour
         if (objectToPlace)
         {
             infoGameObject.SetActive(false);
+            gameManager.SetActive(true);
             tapObjectToPlaceVideo.SetActive(false);
             objectToPlace.transform.position = positionToPlace;
         }

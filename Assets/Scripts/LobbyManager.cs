@@ -48,7 +48,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     
     public void OnQuickMatchButtonClicked()
     {
-        SceneLoader.Instance.LoadScene("Scene_GameTest");
+        SceneLoader.Instance.LoadScene("SampleScene");
     }
 
 
