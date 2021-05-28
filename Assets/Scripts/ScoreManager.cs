@@ -6,10 +6,7 @@ using Photon.Pun;
 public class ScoreManager : MonoBehaviour
 {
     public Text player1Text;
-    public Text player2Text;
     public int playerScore;
-    public Text player1Name;
-    public Text player2Name;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +14,15 @@ public class ScoreManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         
     }
 
     public void DisplayScore(int score1, int score2)
     {
-        player1Text.text = score1.ToString();
-        player2Text.text = score2.ToString();
+       player1Text.text = score1.ToString();
+       // player2Text.text = score2.ToString();
     }
     public void UpdateScore(int score)
     {
@@ -36,11 +33,11 @@ public class ScoreManager : MonoBehaviour
 
     public void SetPlayersOneName(string playerOneName)
     {
-        player1Name.text = playerOneName;
+       // player1Name.text = playerOneName;
     }
 
     public void SetPlayersTwoName(string playerTwoName)
     {
-        player2Name.text = playerTwoName;
+       // player2Name.text = playerTwoName;
     }
 }

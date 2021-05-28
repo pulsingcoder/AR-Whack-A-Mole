@@ -22,7 +22,7 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
     {
         m_ARPlacementManager = GetComponent<ARPlacementManager>();
         m_ARPlaneManager = GetComponent<ARPlaneManager>();
-        GetComponent<ARShoot>().enabled = false;
+      
     }
 
     // Start is called before the first frame update
@@ -37,44 +37,47 @@ public class ARPlacementAndPlaneDetectionControlller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetTouch(0).phase == TouchPhase.Began && Input.touchCount > 0)
+        if (Input.touchCount > 0)
         {
-            m_ARPlacementManager.PlaceObject();
+            if (Input.GetTouch(0).phase == TouchPhase.Began && Input.touchCount > 0)
+            {
+                m_ARPlacementManager.PlaceObject();
 
-            DisableARPlacementAndPlaneDetection();
-            GetComponent<ARShoot>().enabled = true;
-        }
-        // Scale object
-        // We'll using the touch count
-        if (Input.touchCount == 2)
-        {
-            var touchZero = Input.GetTouch(0);
-            var touchOne = Input.GetTouch(1);
-            if (touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled || 
-                touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled)
-            {
-                return;
+                DisableARPlacementAndPlaneDetection();
+
             }
-            if (touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+            // Scale object
+            // We'll using the touch count
+            if (Input.touchCount == 2)
             {
-                initialTouchDistance = Vector2.Distance(touchZero.position, touchOne.position);
-                initialScale = m_ARPlacementManager.objectToPlace.transform.localScale;
-                Debug.Log(initialScale);
-            }
-            else
-            {
-                var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
-                if (Mathf.Approximately(currentDistance, 0))
+                var touchZero = Input.GetTouch(0);
+                var touchOne = Input.GetTouch(1);
+                if (touchOne.phase == TouchPhase.Ended || touchOne.phase == TouchPhase.Canceled ||
+                    touchZero.phase == TouchPhase.Ended || touchZero.phase == TouchPhase.Canceled)
                 {
                     return;
                 }
+                if (touchZero.phase == TouchPhase.Began || touchOne.phase == TouchPhase.Began)
+                {
+                    initialTouchDistance = Vector2.Distance(touchZero.position, touchOne.position);
+                    initialScale = m_ARPlacementManager.objectToPlace.transform.localScale;
+                   
+                }
                 else
                 {
-                    var factor = currentDistance / initialTouchDistance;
-                    m_ARPlacementManager.objectToPlace.transform.localScale = initialScale * factor;
+                    var currentDistance = Vector2.Distance(touchZero.position, touchOne.position);
+                    if (Mathf.Approximately(currentDistance, 0))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        var factor = currentDistance / initialTouchDistance;
+                        m_ARPlacementManager.objectToPlace.transform.localScale = initialScale * factor;
+                    }
                 }
-            }
 
+            }
         }
     }
 

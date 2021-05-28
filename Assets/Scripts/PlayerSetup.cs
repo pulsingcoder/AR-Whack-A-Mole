@@ -13,12 +13,12 @@ public class PlayerSetup : MonoBehaviourPun
         // if this is local player
         if (photonView.IsMine)
         {
-            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().SetPlayersOneName(photonView.Owner.NickName);
+           // GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().SetPlayersOneName(photonView.Owner.NickName);
         }
         // not local player
         else
         {
-            GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().SetPlayersTwoName(photonView.Owner.NickName);
+          //  GameObject.FindGameObjectWithTag("ScoreManager").GetComponent<ScoreManager>().SetPlayersTwoName(photonView.Owner.NickName);
         }
 
     }

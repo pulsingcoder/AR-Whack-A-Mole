@@ -43,7 +43,7 @@ public class MySynchronisationScript : MonoBehaviour, IPunObservable
         if (!photonView.IsMine)
         {
             otherPlayerScoreManager.DisplayScore(otherPlayerScoreManager.playerScore, networkScore);
-            print(networkScore);
+            GetComponent<ARShoot>().score = networkScore;
         }
        
         
@@ -56,7 +56,7 @@ public class MySynchronisationScript : MonoBehaviour, IPunObservable
         {
             // if photon view is mine then I'm the one who control this player 
             // I'll send my position, velocity data to other players
-            stream.SendNext(myScoreManager.playerScore);
+            stream.SendNext(GetComponent<ARShoot>().score);
            
         }
         else

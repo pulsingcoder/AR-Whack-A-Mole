@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8649762489577819025}
   - component: {fileID: 8649762489577819038}
   - component: {fileID: 5784856360394743688}
+  - component: {fileID: 1954152576297875549}
   m_Layer: 0
   m_Name: WhackPlayer
   m_TagString: Player
@@ -80,3 +81,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f8b26fefcec4545b745e32df00f2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1954152576297875549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8649762489577819039}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ca25103b4edcda4b9d5df6aad8fdb3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scorePopUp: {fileID: 6792836570657092795, guid: 77329b69001c8b74ca6ad979c89e05bc, type: 3}
