@@ -6,7 +6,8 @@ using TMPro;
 
 public class PlayerSetup : MonoBehaviourPun
 {
-  
+    public bool ready = false;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +28,12 @@ public class PlayerSetup : MonoBehaviourPun
     void Update()
     {
         
+    }
+
+    [PunRPC]
+    public void SetState(bool state)
+    {
+        ready = state;
     }
 
   

@@ -25,6 +25,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Text ui_TimeText;
     public bool gameOver = false;
     public GameObject whack;
+    public GameObject[] ui_PlayerList;
+    public TextMeshProUGUI[] ui_TextPlayersName;
+    private GameObject myself;
+    public Button[] readyButtons;
+    private int myindex;
+    int countfalse = 0;
+    public GameObject playerListPanel;
  
     
     
@@ -34,12 +41,16 @@ public class GameManager : MonoBehaviourPunCallbacks
  //       players = new List<GameObject>();
         ui_InformPanelGameObject.SetActive(true);
         ui_JoinRandomRoomButton.SetActive(true);
+        playerListPanel.SetActive(true);
         ui_InformText.text = "Search for Games";
+
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+
+       
         if (startGame)
         {
             if (Mathf.Floor(gameTimer) >=0f)
@@ -58,6 +69,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (startGameCounter)
         {
+            
             if (Mathf.Floor(timeCounter) >=0f)
             {
                 timeCounter -= Time.deltaTime;
@@ -75,7 +87,29 @@ public class GameManager : MonoBehaviourPunCallbacks
                 }
             }
         }
-        
+
+        if (!startGameCounter && !startGame)
+        {
+            countfalse = 0;
+         
+            var inGamePlayers = GameObject.FindGameObjectsWithTag("Player");
+            print(inGamePlayers.Length);
+            for (int i = 0; i < inGamePlayers.Length; i++)
+            {
+                print(readyButtons[i].isActiveAndEnabled);
+                if (!readyButtons[i].isActiveAndEnabled)
+                {
+                   
+                    countfalse++;
+                }
+            }
+            if (countfalse == 0 && inGamePlayers.Length > 0)
+            {
+                print("true");
+                startGameCounter = true;
+            }
+        }
+
     }
 
     #region UI_Callback Methods
@@ -101,39 +135,98 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        ui_JoinRandomRoomButton.SetActive(false);
-        if (PhotonNetwork.CurrentRoom.PlayerCount < 3)
-        {
+       
 
-            ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name + " Waiting for other player...";
-        }
-        else 
+        photonView.RPC("SetLobbyPlayerData", RpcTarget.AllBuffered);
+        StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
+        ui_JoinRandomRoomButton.SetActive(false);
+        playerListPanel.SetActive(true);
+        //if (PhotonNetwork.CurrentRoom.PlayerCount < 2)
+        //{
+
+        //    ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name + " Waiting for other player...";
+        //}
+        //else 
+        //{
+        //    ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name;
+        //    StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
+
+        //}
+        //Debug.Log(PhotonNetwork.NickName + " Joined to room " + PhotonNetwork.CurrentRoom.Name);
+        var localPlayers = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < localPlayers.Length; i++)
         {
-            ui_InformText.text = "Jointed to room " + PhotonNetwork.CurrentRoom.Name;
-            StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
-           
+            readyButtons[i].enabled = false;
+            
+                if (localPlayers[i].GetComponent<PhotonView>().IsMine)
+            {
+                print("Player is there");
+                myself = localPlayers[i];
+                myindex = PhotonNetwork.CurrentRoom.PlayerCount - 1;
+                readyButtons[PhotonNetwork.CurrentRoom.PlayerCount-1].enabled = true;
+                
+                readyButtons[PhotonNetwork.CurrentRoom.PlayerCount - 1].onClick.AddListener(ReadyPlayers);
+                //  localPlayers[i].GetComponent<PhotonView>().RPC("SetLobbyPlayerData", RpcTarget.AllBuffered);
+            }
+            
+
         }
-        Debug.Log(PhotonNetwork.NickName + " Joined to room " + PhotonNetwork.CurrentRoom.Name);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        ui_InformText.text = newPlayer.NickName + " Joined the room" + " Player Count " + PhotonNetwork.CurrentRoom.PlayerCount;
-        StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
         
+        //ui_InformText.text = newPlayer.NickName + " Joined the room" + " Player Count " + PhotonNetwork.CurrentRoom.PlayerCount;
+        //if (PhotonNetwork.CurrentRoom.PlayerCount == 3)
+        //{
+        //    StartCoroutine(DeactivateAfterSeconds(ui_InformPanelGameObject, 2.0f));
+        //}
+       
     }
 
     #endregion
+    [PunRPC] 
+    public void SetLobbyPlayerData()
+    {
+        int i = 0;
+        foreach (Player player in PhotonNetwork.PlayerList)
+        {
+            ui_TextPlayersName[i].text = player.NickName;
+            ui_PlayerList[i].SetActive(true);
+            i++; 
+        }     
+    }
 
-
-
+    [PunRPC] 
+    public void SetReadyState(int index, string state)
+    {
+        print(state);
+        readyButtons[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = state;
+    }
     #region Private Methods 
+    void ReadyPlayers()
+    {
+        print("You have Clicked");
+        var state = "READY";
+        if (myself.GetComponent<PlayerSetup>().ready)
+        {
+            myself.GetComponent<PlayerSetup>().ready = false;
+            state = "UNREADY";
+        }
+        else
+        {
+            myself.GetComponent<PlayerSetup>().ready = true;
+            state = "READY";
+        }
 
+        photonView.RPC("SetReadyState", RpcTarget.AllBuffered, myindex, state);
+
+    }
     void CreateAndJoinRoom()
     {
         string roomName = "Room No: " + UnityEngine.Random.Range(0, 999);
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 2;
+        roomOptions.MaxPlayers = 4;
 
         PhotonNetwork.CreateRoom(roomName, roomOptions);
     }
@@ -143,7 +236,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(seconds);
         _gameObject.SetActive(false);
-        startGameCounter = true;
+      
 
     }
 
@@ -179,6 +272,15 @@ public class GameManager : MonoBehaviourPunCallbacks
                  sortedPlayers[i].GetComponent<ARShoot>().score + "\n";
         }
         ui_LeaderBoardText.text = boardText;
+    }
+
+
+    void SetPlayerOnList(int index, string playerName)
+    {
+
+        ui_PlayerList[index].SetActive(true);
+        ui_TextPlayersName[index].text = playerName;
+
     }
     #endregion
 
