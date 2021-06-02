@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     GameObject.FindGameObjectWithTag("Player").GetComponent<ARShoot>().enabled = true;
                 }
+                playerListPanel.SetActive(false);
             }
         }
 
@@ -96,8 +97,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             print(inGamePlayers.Length);
             for (int i = 0; i < inGamePlayers.Length; i++)
             {
-                print(readyButtons[i].isActiveAndEnabled);
-                if (!readyButtons[i].isActiveAndEnabled)
+                print(inGamePlayers[i].GetComponent<PlayerSetup>().ready);
+                if (!inGamePlayers[i].GetComponent<PlayerSetup>().ready)
                 {
                    
                     countfalse++;
@@ -107,6 +108,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 print("true");
                 startGameCounter = true;
+                
             }
         }
 
@@ -211,11 +213,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (myself.GetComponent<PlayerSetup>().ready)
         {
             myself.GetComponent<PlayerSetup>().ready = false;
+            myself.GetComponent<PhotonView>().RPC("SetState", RpcTarget.AllBuffered, false);
             state = "UNREADY";
         }
         else
         {
             myself.GetComponent<PlayerSetup>().ready = true;
+            myself.GetComponent<PhotonView>().RPC("SetState", RpcTarget.AllBuffered, true);
             state = "READY";
         }
 
