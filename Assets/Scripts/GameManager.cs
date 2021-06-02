@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int myindex;
     int countfalse = 0;
     public GameObject playerListPanel;
- 
+  
     
     
     // Start is called before the first frame update
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         ui_JoinRandomRoomButton.SetActive(true);
         playerListPanel.SetActive(true);
         ui_InformText.text = "Search for Games";
-
+        
     }
 
     // Update is called once per frame
@@ -272,7 +272,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         print("YUvraj");
         for (int i=0;i<players.Length;i++)
         {
-            boardText += i + 1 + "." + sortedPlayers[i].GetComponent<PhotonView>().Owner.NickName + " " + "Scored " +
+            boardText += sortedPlayers[i].GetComponent<PhotonView>().Owner.NickName + " " + "Score " +
                  sortedPlayers[i].GetComponent<ARShoot>().score + "\n";
         }
         ui_LeaderBoardText.text = boardText;

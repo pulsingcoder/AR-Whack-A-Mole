@@ -14,7 +14,7 @@ public class ARShoot : MonoBehaviour
     public int score = 0;
  
     RaycastHit hit;
-
+    AudioSource myAudioSource;
     
    // public GameObject hammer;
  
@@ -22,8 +22,8 @@ public class ARShoot : MonoBehaviour
     void Start()
     {
         arCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        
-       /// scorePopUp = GameObject.FindGameObjectWithTag("PopUpNumber");
+        myAudioSource = GetComponent<AudioSource>();
+        /// scorePopUp = GameObject.FindGameObjectWithTag("PopUpNumber");
         photonView = GetComponent<PhotonView>();
     }
 
@@ -45,7 +45,7 @@ public class ARShoot : MonoBehaviour
                         {
                             if (hit.transform.position.y > -2.8)
                             {
-
+                                myAudioSource.Play();
                                 if (hit.transform.GetChild(11))
                                 {
                                     hit.transform.GetChild(11).gameObject.SetActive(true);
